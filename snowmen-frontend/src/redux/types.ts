@@ -1,0 +1,8 @@
+export const GAME_LOADED = "GAME_LOADED";
+export const USER_CONNECTED = "USER_CONNECTED";
+export const GAME_OVER = "GAME_OVER";
+export const REWARD_LOADING = "REWARD_LOADING";
+export const RECEIVED_REWARD = "RECEIVED_REWARD";
+export const ITEM_PURCHASED = "ITEM_PURCHASED";
+export const TICKET_PURCHASED = "TICKET_PURCHASED";
+export const USER_ITEMS = "USER_ITEMS";

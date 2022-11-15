@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "name": "backend",
+      "script": "src/index.js",
+      "autorestart": true,
+      "time": true,
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
