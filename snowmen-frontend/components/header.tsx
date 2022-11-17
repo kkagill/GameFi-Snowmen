@@ -20,23 +20,24 @@ import { clientBackend, createMsg, showToast } from '../src/helpers';
 import { userConnected, userItems } from '../src/redux/actions';
 import { TICKET_ID } from '../src/blockchain/itemIds';
 import items from '../src/blockchain/items.json';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 
 export const Header = () => {
   const dispatch = useDispatch();
   const [mounted, setMounted] = useState(false); // Hydration failed because the initial UI does not match error
   const [tokenAmount, setTokenAmount] = useState('');
   const [ticketAmount, setTicketAmount] = useState('');
-  const { phaserLoaded, puchasedItem, purchasedTicket, isAuthenticated } = useSelector((state: any) => state);
+  const { phaserLoaded, purchasedItem, purchasedTicket, isAuthenticated } = useSelector((state: any) => state);
   const { connector: activeConnector, address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
-  const { disconnectAsync } = useDisconnect(); 
+  const { disconnectAsync } = useDisconnect();
   const router = useRouter();
   const provider = useProvider();
 
   const { data: tokenBalance, refetch: refetchToken } = useBalance({
     addressOrName: address,
-    token: SNOWMEN_TOKEN_ADDRESS  })
+    token: SNOWMEN_TOKEN_ADDRESS
+  })
 
   const { data: ticketBalance, refetch: refetchTicket } = useContractRead({
     address: SNOWMEN_GAME_ADDRESS,
@@ -70,7 +71,7 @@ export const Header = () => {
     }
 
     getBalance();
-  }, [puchasedItem]);
+  }, [purchasedItem]);
 
   useEffect(() => {
     async function getBalance() {
@@ -95,7 +96,7 @@ export const Header = () => {
 
       if (router.asPath === '/' && noTicket) {
         showToast('info', '게임 시작을 위한 티켓이 필요합니다. 스토어에서 구매해주세요.', 3);
-        logout(); 
+        logout();
       } else {
         const accessToken = localStorage.getItem('accessToken');
 
@@ -180,14 +181,14 @@ export const Header = () => {
     <>
       <div>
         <Head>
-          <title>SNOWMEN ATTACK</title>
+          <title>SNOWMEN FIGHT</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
       </div>
 
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="/">SNOWMAN ATTACK</Navbar.Brand>
+          <Navbar.Brand href="/">SNOWMEN FIGHT</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link href="/">게임</Nav.Link>
             <Nav.Link href="/store">스토어</Nav.Link>

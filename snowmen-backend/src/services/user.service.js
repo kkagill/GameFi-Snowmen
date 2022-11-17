@@ -1,5 +1,4 @@
 const { User } = require('../models');
-const mongoose = require('mongoose');
 const ethUtil = require('ethereumjs-util');
 const sigUtil = require('eth-sig-util');
 

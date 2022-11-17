@@ -3,7 +3,7 @@
   "author": "Sejong Shon",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon  src/index.js"
+    "start": "nodemon src/index.js"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.4",

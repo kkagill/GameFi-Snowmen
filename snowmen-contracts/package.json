@@ -1,5 +1,6 @@
 {
   "name": "snowmen-contracts",
+  "author": "Sejong Shon",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,8 +9,7 @@
     "deploy:local": "hardhat --network hardhat deploy",
     "deploy:mumbai": "hardhat --network mumbai deploy"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",

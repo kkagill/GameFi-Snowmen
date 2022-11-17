@@ -4,11 +4,10 @@ const getAllRewards = async () => {
   return Reward.find({});
 }
 
-const createReward = async (userId, account, score) => {
+const createReward = async (account, amount) => {
   const reward = new Reward({
-    userId,
     account,
-    score,
+    amount,
     processed: false,
     txHash: ''
   });

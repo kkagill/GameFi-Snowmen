@@ -18,13 +18,16 @@ import {
 } from 'wagmi';
 import { SNOWMEN_SALES_ABI } from '../src/blockchain/abis/SnowmenSales.abi';
 import { SNOWMEN_GAME_ABI } from '../src/blockchain/abis/SnowmenGame.abi';
-import { SNOWMEN_SALES_ADDRESS, SNOWMEN_TOKEN_ADDRESS, SNOWMEN_GAME_ADDRESS } from '../src/blockchain/addresses';
+import { 
+  SNOWMEN_SALES_ADDRESS, 
+  SNOWMEN_TOKEN_ADDRESS, 
+  SNOWMEN_GAME_ADDRESS 
+} from '../src/blockchain/addresses';
 import { BigNumber, ethers } from 'ethers';
 import { itemPurchased, ticketPurchased } from '../src/redux/actions';
 import items from '../src/blockchain/items.json';
 import { showToast } from '../src/helpers';
 import { useDispatch, useSelector } from 'react-redux';
-import { EVENT_ID } from '../src/blockchain/itemIds';
 
 const Store = () => {
   const dispatch = useDispatch();
@@ -33,7 +36,6 @@ const Store = () => {
   const [show, setShow] = useState(false);
   const [modalText, setModalText] = useState('');
   const [itemRemainings, setItemRemainings] = useState<string[]>([]);
-  const [eventRemainings, setEventRemainings] = useState('');
   const { address } = useAccount();
   const { chain: activeChain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
@@ -150,11 +152,10 @@ const Store = () => {
   useEffect(() => {
     async function getRemainings() {
       const itemRemainings = await checkItemRemainings();
-      const eventRemainings = await getBalanceOf(SNOWMEN_SALES_ADDRESS, EVENT_ID);
+      console.log(itemRemainings)
       setItemRemainings(itemRemainings);
-      setEventRemainings(eventRemainings.toString());
     }
-   
+
     getRemainings();
   }, [gameContract, purchasedTicket, purchasedItem]);
 
@@ -163,9 +164,11 @@ const Store = () => {
 
     try {
       for (const item of items) {
-        const balance = await getBalanceOf(SNOWMEN_SALES_ADDRESS, item.tokenId);        
+        const balance = await gameContract?.balanceOf(SNOWMEN_SALES_ADDRESS, item.tokenId);
         if (balance > 0) {
           balances.push(balance.toString());
+        } else {
+          balances.push('0');
         }
       }
     } catch (err) {
@@ -173,10 +176,6 @@ const Store = () => {
     }
 
     return balances;
-  }
-
-  const getBalanceOf = async (address: string, tokenId: string) => {
-    return await gameContract?.balanceOf(address, tokenId);     
   }
 
   const checkNetworks = () => {
@@ -206,15 +205,6 @@ const Store = () => {
     handleShow();
   }
 
-  const puchaseEvent = () => {
-    const amountInWei = ethers.utils.parseUnits('50', 18);
-    setAmount(amountInWei);
-    setTokenId(EVENT_ID);
-    setModalText('두개의 트랜젝션을 컨펌 하셔야 합니다. 먼저 토큰 승인 해주세요.');
-    approve?.({ recklesslySetUnpreparedArgs: [SNOWMEN_SALES_ADDRESS, amountInWei] });
-    handleShow();
-  }
-
   return (
     <>
       <Modal
@@ -230,10 +220,6 @@ const Store = () => {
       </Modal>
 
       <Container>
-
-        <p>티켓</p>
-        <hr />
-
         <Row xs={1} md={5}>
           <Col>
             <Card>
@@ -259,8 +245,6 @@ const Store = () => {
           </Col>
         </Row>
 
-        <br />
-        <p>아이템</p>
         <hr />
 
         <Row xs={1} md={5}>
@@ -289,36 +273,6 @@ const Store = () => {
               </Card>
             </Col>
           )}
-        </Row>
-
-        <br />
-        <p>이벤트</p>
-        <hr />
-
-        <Row xs={1} md={5}>
-          <Col>
-            <Card>
-              <Card.Img variant="top" src="images/1020847100762815390390123822295304634368.png" />
-              <Card.Body>
-                <Card.Title>Special Event</Card.Title>
-                <Card.Text>
-                  구매시 SNOW 토큰 50-100개 사이 랜덤하게 증정
-                </Card.Text>
-                <hr />
-                <div style={{ textAlign: 'right' }}>
-                  <p>남은 수량: {eventRemainings}개</p>
-                  <p>50 SNOW</p>
-                  <Button
-                    variant="primary"
-                    style={{ textAlign: 'right' }}
-                    onClick={() => puchaseEvent()}
-                  >
-                    구매
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
         </Row>
       </Container>
 

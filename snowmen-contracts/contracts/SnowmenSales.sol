@@ -27,7 +27,7 @@ contract SnowmenSales is Ownable, ERC1155Holder {
 
     event BuyItem(
         address indexed buyer,
-        uint256 indexed tokenId,
+        uint256 tokenId,
         uint256 amount,
         uint256 timestamp
     );

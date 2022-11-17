@@ -7,17 +7,16 @@ const getRewards = async (_, res) => {
 };
 
 const saveScore = async (req, res) => {
-  const { user } = req;
   const { account, score } = req.body;
 
   try {
-    const reward = await rewardService.createReward(user._id, account, score);
+    const result = await rewardService.createReward(account, score);
 
-    if (reward) {
+    if (result) {
       const receipt = await blockchainService.sendSnowmenToken(account, score);
 
       if (receipt.status === 1) {
-        const { _id: rewardId } = reward;
+        const { _id: rewardId } = result;
         await rewardService.updateTxHash(rewardId, receipt.transactionHash);
         console.log(receipt.transactionHash)
         return res.status(httpStatus.OK).send();
