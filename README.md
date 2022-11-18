@@ -1,4 +1,4 @@
-# GameFi-Snowmen
+# GameFi-Snowmen P2E
 
 ![Game](https://i.ibb.co/nfg5WCg/1.png)
 
