@@ -1,4 +1,4 @@
-# GameFi-Snowmen-Fight
+# GameFi-Snowmen
 
 ![Game](https://i.ibb.co/nfg5WCg/1.png)
 
