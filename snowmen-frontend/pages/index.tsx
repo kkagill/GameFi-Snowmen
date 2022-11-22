@@ -1,15 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAccount } from 'wagmi';
-import { gameLoaded } from '../src/redux/actions';
+import { loadGame } from '../src/redux/actions';
 import { clientBackend } from '../src/helpers';
 
 const Home = () => {
   const dispatch = useDispatch();
+  const [game, setGame] = useState<Phaser.Game>();
   const { address } = useAccount();
   const { phaserLoaded, gameOverScore } = useSelector((state: any) => state);
- 
+
   useEffect(() => {
+    if (game) {
+      game?.destroy(true);
+      window.location.reload();
+    }
     initPhaser();
   }, []);
 
@@ -43,20 +48,17 @@ const Home = () => {
     const game = new Phaser.Game(config);
 
     if (game) {
-      dispatch(gameLoaded(true));
+      setGame(game);
+      dispatch(loadGame(true));
     }
   }
 
   const saveScore = async () => {
     try {
       await clientBackend.post('/reward/score', { account: address, score: gameOverScore });
-      // dispatch(rewardLoading(false));
-      // dispatch(gameOver(0));
       window.location.reload();
     } catch (err) {
       console.error(err);
-      // dispatch(rewardLoading(false));
-      // dispatch(gameOver(0));
     }
   };
 

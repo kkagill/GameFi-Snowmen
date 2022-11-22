@@ -2,7 +2,7 @@ import Track from './Track.js';
 import Player from './Player.js';
 import Phaser from "phaser";
 import store from '../../store';
-import { gameOver, rewardLoading } from "../redux/actions"
+import { gameOver, loadReward } from "../redux/actions"
 import { HELMET_ID, SWORD_ID } from '../blockchain/itemIds.ts';
 
 export default class MainGame extends Phaser.Scene {
@@ -28,7 +28,7 @@ export default class MainGame extends Phaser.Scene {
             if (!state.isAuthenticated) {
                 console.log('game')
                 this.scene.start("MainMenu");
-            }
+            }           
         });
     }
 
@@ -141,6 +141,11 @@ export default class MainGame extends Phaser.Scene {
                 this.scoreText.setText(this.score);
             }, callbackScope: this, repeat: -1
         });
+
+        let state = store.getState();
+        if (state.networkChanged) {
+            this.scene.stop();
+        }
     }
 
     gameOver() {
@@ -174,7 +179,7 @@ export default class MainGame extends Phaser.Scene {
         this.receiveRewardText.setStroke('#203c5b', 6);
         this.receiveRewardText.setShadow(2, 2, '#2d2d2d', 4, true, false);
 
-        store.dispatch(rewardLoading(true));
+        store.dispatch(loadReward(true));
         store.dispatch(gameOver(this.score));
     }
 }

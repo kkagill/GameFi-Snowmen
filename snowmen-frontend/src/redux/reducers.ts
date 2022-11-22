@@ -1,12 +1,12 @@
 import {
-  GAME_LOADED,
-  USER_CONNECTED,
+  LOAD_GAME,
+  CONNECT_USER,
   GAME_OVER,
-  REWARD_LOADING,
-  RECEIVED_REWARD,
-  ITEM_PURCHASED,
-  TICKET_PURCHASED,
+  LOAD_REWARD,
+  PURCHASE_ITEM,
+  PURCHASE_TICKET,
   USER_ITEMS,
+  CHANGE_NETWORK,
 } from "./types";
 
 const initState = {
@@ -14,30 +14,30 @@ const initState = {
   isAuthenticated: false,
   gameOverScore: 0,
   rewardLoading: false,
-  receivedReward: false,
-  purchasedItem: false,
-  purchasedTicket: false,
+  itemPurchased: false,
+  ticketPurchased: false,
+  networkChanged: false,
   userItems: [],
 };
 
 export const reducer = (state = initState, action: any) => {
   switch (action.type) {
-    case GAME_LOADED:
+    case LOAD_GAME:
       return { ...state, phaserLoaded: action.payload };
-    case USER_CONNECTED:
+    case CONNECT_USER:
       return { ...state, isAuthenticated: action.payload };
     case GAME_OVER:
       return { ...state, gameOverScore: action.payload };
-    case REWARD_LOADING:
+    case LOAD_REWARD:
       return { ...state, rewardLoading: action.payload };
-    case RECEIVED_REWARD:
-      return { ...state, receivedReward: action.payload };
-    case ITEM_PURCHASED:
-      return { ...state, purchasedItem: action.payload };
-    case TICKET_PURCHASED:
-      return { ...state, purchasedTicket: action.payload };
+    case PURCHASE_ITEM:
+      return { ...state, itemPurchased: action.payload };
+    case PURCHASE_TICKET:
+      return { ...state, ticketPurchased: action.payload };
     case USER_ITEMS:
       return { ...state, userItems: action.payload };
+    case CHANGE_NETWORK:
+      return { ...state, networkChanged: action.payload };
     default:
       return state;
   }

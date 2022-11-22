@@ -1,21 +1,21 @@
 import {
-    GAME_LOADED,
-    USER_CONNECTED,
+    LOAD_GAME,
+    CONNECT_USER,
     GAME_OVER,
-    REWARD_LOADING,
-    RECEIVED_REWARD,
-    ITEM_PURCHASED,
-    TICKET_PURCHASED,
+    LOAD_REWARD,
+    PURCHASE_ITEM,
+    PURCHASE_TICKET,
     USER_ITEMS,
+    CHANGE_NETWORK,
 } from "./types";
 
-export const gameLoaded = (loaded: boolean) => ({
-    type: GAME_LOADED,
+export const loadGame = (loaded: boolean) => ({
+    type: LOAD_GAME,
     payload: loaded,
 });
 
-export const userConnected = (isAuthenticated: boolean) => ({
-    type: USER_CONNECTED,
+export const connectUser = (isAuthenticated: boolean) => ({
+    type: CONNECT_USER,
     payload: isAuthenticated,
 });
 
@@ -24,27 +24,27 @@ export const gameOver = (gameOverScore: number) => ({
     payload: gameOverScore
 });
 
-export const rewardLoading = (loading: boolean) => ({
-    type: REWARD_LOADING,
+export const loadReward = (loading: boolean) => ({
+    type: LOAD_REWARD,
     payload: loading
 });
 
-export const receivedReward = (received: boolean) => ({
-    type: RECEIVED_REWARD,
-    payload: received
-});
-
-export const itemPurchased = (purchased: boolean) => ({
-    type: ITEM_PURCHASED,
+export const purchaseItem = (purchased: boolean) => ({
+    type: PURCHASE_ITEM,
     payload: purchased
 });
 
-export const ticketPurchased = (purchased: boolean) => ({
-    type: TICKET_PURCHASED,
+export const purchaseTicket = (purchased: boolean) => ({
+    type: PURCHASE_TICKET,
     payload: purchased
 });
 
 export const userItems = (items: string[]) => ({
     type: USER_ITEMS,
     payload: items
+});
+
+export const networkChanged = (changed: boolean) => ({
+    type: CHANGE_NETWORK,
+    payload: changed
 });

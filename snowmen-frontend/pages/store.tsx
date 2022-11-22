@@ -6,12 +6,9 @@ import Row from 'react-bootstrap/Row';
 import Modal from 'react-bootstrap/Modal';
 import { useEffect, useState } from 'react';
 import {
-  chain,
   useAccount,
   useContractWrite,
   useWaitForTransaction,
-  useNetwork,
-  useSwitchNetwork,
   useProvider,
   useContract,
   erc20ABI
@@ -24,7 +21,7 @@ import {
   SNOWMEN_GAME_ADDRESS 
 } from '../src/blockchain/addresses';
 import { BigNumber, ethers } from 'ethers';
-import { itemPurchased, ticketPurchased } from '../src/redux/actions';
+import { purchaseItem, purchaseTicket } from '../src/redux/actions';
 import items from '../src/blockchain/items.json';
 import { showToast } from '../src/helpers';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,10 +34,8 @@ const Store = () => {
   const [modalText, setModalText] = useState('');
   const [itemRemainings, setItemRemainings] = useState<string[]>([]);
   const { address } = useAccount();
-  const { chain: activeChain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
   const provider = useProvider();
-  const { purchasedTicket, purchasedItem } = useSelector((state: any) => state);
+  const { itemPurchased } = useSelector((state: any) => state);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -124,7 +119,7 @@ const Store = () => {
     onSuccess() {
       handleClose();
       showToast('success', '티켓 구매 완료 하였습니다.', 2);
-      dispatch(ticketPurchased(true));
+      dispatch(purchaseTicket(true));
     },
     onError(error) {
       handleClose();
@@ -137,17 +132,13 @@ const Store = () => {
     onSuccess() {
       handleClose();
       showToast('success', '구매 완료 하였습니다.', 2);
-      dispatch(itemPurchased(true));
+      dispatch(purchaseItem(true));
     },
     onError(error) {
       handleClose();
       showToast('error', `${error?.reason}`, 2);
     },
   })
-
-  useEffect(() => {
-    checkNetworks();
-  }, [activeChain?.id]);
 
   useEffect(() => {
     async function getRemainings() {
@@ -157,7 +148,7 @@ const Store = () => {
     }
 
     getRemainings();
-  }, [gameContract, purchasedTicket, purchasedItem]);
+  }, [gameContract, itemPurchased]);
 
   const checkItemRemainings = async () => {
     let balances: string[] = [];
@@ -178,25 +169,13 @@ const Store = () => {
     return balances;
   }
 
-  const checkNetworks = () => {
-    if (activeChain?.id !== undefined) {
-      if (activeChain?.id !== chain.polygonMumbai.id) {
-        handleShow();
-        setModalText('네트워크가 변경되었습니다. 폴리곤 Mumbai로 바꿔주세요');
-        switchNetwork?.(chain.polygonMumbai.id);
-      } else {
-        handleClose();
-      }
-    }
-  };
-
-  const puchaseTicket = () => {
+  const onTicketPurchase = () => {
     setModalText('티켓 구매 컨펌 해주세요.');
     buyTicket?.();
     handleShow();
   }
 
-  const purchaseItem = (tokenId: string, price: string) => {
+  const onItemPurchase = (tokenId: string, price: string) => {
     const amountInWei = ethers.utils.parseUnits(price, 18);
     setAmount(amountInWei);
     setTokenId(tokenId);
@@ -235,9 +214,9 @@ const Store = () => {
                   <Button
                     variant="primary"
                     style={{ textAlign: 'right' }}
-                    onClick={() => puchaseTicket()}
+                    onClick={() => onTicketPurchase()}
                   >
-                    구매
+                    Buy
                   </Button>
                 </div>
               </Card.Body>
@@ -264,9 +243,9 @@ const Store = () => {
                     <Button
                       variant="primary"
                       style={{ textAlign: 'right' }}
-                      onClick={() => purchaseItem(item.tokenId, item.price)}
+                      onClick={() => onItemPurchase(item.tokenId, item.price)}
                     >
-                      구매
+                      Buy
                     </Button>
                   </div>
                 </Card.Body>

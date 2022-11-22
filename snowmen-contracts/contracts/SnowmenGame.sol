@@ -33,8 +33,8 @@ contract SnowmenGame is ERC1155Supply, Ownable {
         //require(msg.value >= 1e18, "price low");
     }
 
-    function confirmUpload(string calldata hash) external onlyOwner {
-        _metadataHash[atFolderId.current()] = hash;
+    function confirmUpload(string calldata ipfsHash) external onlyOwner {
+        _metadataHash[atFolderId.current()] = ipfsHash;
         atFolderId.increment();
     }
 

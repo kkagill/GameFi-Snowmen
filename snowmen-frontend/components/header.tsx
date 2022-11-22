@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import Modal from 'react-bootstrap/Modal';
 import Container from 'react-bootstrap/Container';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import {
@@ -13,11 +14,13 @@ import {
   useContract,
   useBalance,
   useProvider,
+  useSwitchNetwork,
+  ConnectorData,
 } from 'wagmi';
 import { SNOWMEN_TOKEN_ADDRESS, SNOWMEN_GAME_ADDRESS } from '../src/blockchain/addresses';
 import { SNOWMEN_GAME_ABI } from '../src/blockchain/abis/SnowmenGame.abi';
 import { clientBackend, createMsg, showToast } from '../src/helpers';
-import { userConnected, userItems } from '../src/redux/actions';
+import { connectUser, userItems, networkChanged } from '../src/redux/actions';
 import { TICKET_ID } from '../src/blockchain/itemIds';
 import items from '../src/blockchain/items.json';
 import { useRouter } from 'next/router';
@@ -27,15 +30,21 @@ export const Header = () => {
   const [mounted, setMounted] = useState(false); // Hydration failed because the initial UI does not match error
   const [tokenAmount, setTokenAmount] = useState('');
   const [ticketAmount, setTicketAmount] = useState('');
-  const { phaserLoaded, purchasedItem, purchasedTicket, isAuthenticated } = useSelector((state: any) => state);
+  const [show, setShow] = useState(false);
+  const [modalText, setModalText] = useState('');
+  const { phaserLoaded, itemPurchased, ticketPurchased, isAuthenticated } = useSelector((state: any) => state);
   const { connector: activeConnector, address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const { disconnectAsync } = useDisconnect();
+  const { switchNetwork } = useSwitchNetwork();
   const router = useRouter();
   const provider = useProvider();
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const { data: tokenBalance, refetch: refetchToken } = useBalance({
-    addressOrName: address,
+    address: address,
     token: SNOWMEN_TOKEN_ADDRESS
   })
 
@@ -71,7 +80,7 @@ export const Header = () => {
     }
 
     getBalance();
-  }, [purchasedItem]);
+  }, [itemPurchased]);
 
   useEffect(() => {
     async function getBalance() {
@@ -82,13 +91,7 @@ export const Header = () => {
     }
 
     getBalance();
-  }, [purchasedTicket]);
-
-  useEffect(() => {
-    if (activeConnector) {
-      activeConnector.on("change", logout);
-    }
-  }, [activeConnector]);
+  }, [ticketPurchased]);
 
   useEffect(() => {
     if (isConnected) {
@@ -102,7 +105,7 @@ export const Header = () => {
 
         if (accessToken) {
           if (phaserLoaded) {
-            dispatch(userConnected(true));
+            dispatch(connectUser(true));
           }
         } else {
           login();
@@ -110,7 +113,7 @@ export const Header = () => {
       }
     } else { // logout
       if (phaserLoaded) {
-        dispatch(userConnected(false));
+        dispatch(connectUser(false));
         logout();
       }
     }
@@ -129,6 +132,28 @@ export const Header = () => {
     }
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    const handleConnectorUpdate = ({ account, chain }: ConnectorData) => {
+      if (account) {
+        logout();
+      } else if (chain) {
+        if (chain?.id !== 80001) {
+          handleShow();
+          setModalText('네트워크가 변경되었습니다. 폴리곤 Mumbai로 바꿔주세요');
+          dispatch(networkChanged(true));
+          switchNetwork?.(80001);
+        } else {
+          handleClose();
+          dispatch(networkChanged(false));
+        }
+      }
+    }
+
+    if (activeConnector) {
+      activeConnector.on('change', handleConnectorUpdate)
+    }
+  }, [activeConnector])
+
   const login = async () => {
     try {
       const res = await clientBackend.post('/user/login', { account: address });
@@ -140,7 +165,7 @@ export const Header = () => {
 
         if (data.accessToken) {
           localStorage.setItem('accessToken', data.accessToken);
-          dispatch(userConnected(true));
+          dispatch(connectUser(true));
         }
       }
     } catch (err: any) {
@@ -152,7 +177,7 @@ export const Header = () => {
   const logout = async () => {
     try {
       await disconnectAsync();
-      dispatch(userConnected(false));
+      dispatch(connectUser(false));
       localStorage.removeItem('accessToken');
       await clientBackend.post('/user/logout');
     } catch (err) {
@@ -179,19 +204,31 @@ export const Header = () => {
 
   return (
     <>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        centered
+      >
+        <Modal.Body>
+          {modalText}
+        </Modal.Body>
+      </Modal>
+
       <div>
         <Head>
-          <title>SNOWMEN FIGHT</title>
+          <title>SNOWMEN</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
       </div>
 
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="/">SNOWMEN FIGHT</Navbar.Brand>
+          <Navbar.Brand href="/">SNOWMEN</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="/">게임</Nav.Link>
-            <Nav.Link href="/store">스토어</Nav.Link>
+            <Nav.Link href="/">Game</Nav.Link>
+            <Nav.Link href="/store">Store</Nav.Link>
           </Nav>
           <Nav className="me-auto">
             <Navbar.Text>

@@ -1,8 +1,8 @@
-export const GAME_LOADED = "GAME_LOADED";
-export const USER_CONNECTED = "USER_CONNECTED";
+export const LOAD_GAME = "LOAD_GAME";
+export const CONNECT_USER = "CONNECT_USER";
 export const GAME_OVER = "GAME_OVER";
-export const REWARD_LOADING = "REWARD_LOADING";
-export const RECEIVED_REWARD = "RECEIVED_REWARD";
-export const ITEM_PURCHASED = "ITEM_PURCHASED";
-export const TICKET_PURCHASED = "TICKET_PURCHASED";
+export const LOAD_REWARD = "LOAD_REWARD";
+export const PURCHASE_ITEM = "PURCHASE_ITEM";
+export const PURCHASE_TICKET = "PURCHASE_TICKET";
 export const USER_ITEMS = "USER_ITEMS";
+export const CHANGE_NETWORK = "CHANGE_NETWORK";
