@@ -2,7 +2,7 @@
 
 - Fully decentralized ERC1155 contract aimed to save more gas and can be used with Arweave 
 - Sales contract that servers as a store 
-- P2E concept using Phaser 3 game
+- P2E concept using Phaser 3 engine
 - Moralis stream API to receive event data via webhook
 
 
