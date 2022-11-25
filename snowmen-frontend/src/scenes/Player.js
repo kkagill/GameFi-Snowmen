@@ -14,6 +14,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.isAlive = true;
         this.isThrowing = false;
 
+        this.sound = scene.sound;
         this.currentTrack = track;
 
         this.spacebar = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -49,6 +50,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         }
 
         this.y = this.currentTrack.y;
+
+        this.sound.play('move');
     }
 
     moveDown ()
@@ -63,6 +66,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         }
 
         this.y = this.currentTrack.y;
+
+        this.sound.play('move');
     }
 
     throw ()
@@ -70,6 +75,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.isThrowing = true;
 
         this.play('throwStart');
+
+        this.sound.play('throw');
     }
 
     releaseSnowball ()

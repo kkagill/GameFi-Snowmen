@@ -15,10 +15,10 @@ import {
 } from 'wagmi';
 import { SNOWMEN_SALES_ABI } from '../src/blockchain/abis/SnowmenSales.abi';
 import { SNOWMEN_GAME_ABI } from '../src/blockchain/abis/SnowmenGame.abi';
-import { 
-  SNOWMEN_SALES_ADDRESS, 
-  SNOWMEN_TOKEN_ADDRESS, 
-  SNOWMEN_GAME_ADDRESS 
+import {
+  SNOWMEN_SALES_ADDRESS,
+  SNOWMEN_TOKEN_ADDRESS,
+  SNOWMEN_GAME_ADDRESS
 } from '../src/blockchain/addresses';
 import { BigNumber, ethers } from 'ethers';
 import { purchaseItem, purchaseTicket } from '../src/redux/actions';

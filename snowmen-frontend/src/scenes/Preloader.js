@@ -13,9 +13,16 @@ export default class Preloader extends Phaser.Scene {
         this.loadText.setShadow(2, 2, '#2d2d2d', 4, true, false);
 
         this.load.setPath('assets/');
-        this.load.image(['background', 'overlay', 'gameover', 'title']);
-        this.load.atlas('sprites', 'sprites_basic.png', 'sprites.json');        
-        this.load.glsl('snow', 'snow.glsl.js');
+        this.load.image(['background', 'title']);
+        this.load.atlas('sprites', 'sprites_basic.png', 'sprites.json');
+
+        this.load.setPath('assets/sounds/');
+        // Sound from Zapsplat.com
+        this.load.audio('music', ['music.mp3']);
+        this.load.audio('throw', ['throw.mp3']);
+        this.load.audio('move', ['move.mp3']);
+        this.load.audio('hit-snowman', ['hit-snowman.mp3']);
+        this.load.audio('gameover', ['gameover.mp3']);
     }
 
     create() {
@@ -112,6 +119,17 @@ export default class Preloader extends Phaser.Scene {
             frameRate: 14
         });
 
-        this.scene.start("MainMenu");
+        if (this.sound.locked) {
+            this.loadText.setText('Click to Start');
+
+            this.input.once('pointerdown', () => {
+
+                this.scene.start('MainMenu');
+
+            });
+        }
+        else {
+            this.scene.start('MainMenu');
+        }
     }
 }

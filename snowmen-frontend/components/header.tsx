@@ -16,6 +16,7 @@ import {
   useProvider,
   useSwitchNetwork,
   ConnectorData,
+  useNetwork,
 } from 'wagmi';
 import { SNOWMEN_TOKEN_ADDRESS, SNOWMEN_GAME_ADDRESS } from '../src/blockchain/addresses';
 import { SNOWMEN_GAME_ABI } from '../src/blockchain/abis/SnowmenGame.abi';
@@ -37,6 +38,7 @@ export const Header = () => {
   const { signMessageAsync } = useSignMessage();
   const { disconnectAsync } = useDisconnect();
   const { switchNetwork } = useSwitchNetwork();
+  const { chain: activeChain } = useNetwork();
   const router = useRouter();
   const provider = useProvider();
 
@@ -66,8 +68,15 @@ export const Header = () => {
   }, []);
 
   useEffect(() => {
-    if (tokenBalance) {
-      setTokenAmount(tokenBalance.formatted);
+    if (isConnected) {
+      setTokenAmount(tokenBalance!.formatted);
+      // 새로고침했을때도 네트워크 mumbai아니면 나오게하는 부분
+      if (activeChain?.id !== 80001) {
+        handleShow();
+        setModalText('네트워크가 변경되었습니다. 폴리곤 Mumbai로 바꿔주세요');
+        dispatch(networkChanged(true));
+        switchNetwork?.(80001);
+      }
     }
   }, [isConnected]);
 
@@ -113,7 +122,6 @@ export const Header = () => {
       }
     } else { // logout
       if (phaserLoaded) {
-        dispatch(connectUser(false));
         logout();
       }
     }
@@ -178,6 +186,7 @@ export const Header = () => {
     try {
       await disconnectAsync();
       dispatch(connectUser(false));
+      dispatch(userItems([]));
       localStorage.removeItem('accessToken');
       await clientBackend.post('/user/logout');
     } catch (err) {
@@ -192,7 +201,9 @@ export const Header = () => {
       for (const item of items) {
         const balance = await gameContract?.balanceOf(address, item.tokenId);
         if (balance > 0) {
-          tokenIds.push(item.tokenId);
+          if (item.tokenId !== '1020847100762815390390123822295304634368') {
+            tokenIds.push(item.tokenId);
+          }
         }
       }
     } catch (err) {
@@ -218,17 +229,17 @@ export const Header = () => {
 
       <div>
         <Head>
-          <title>SNOWMEN</title>
+          <title>스노우맨</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
       </div>
 
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="/">SNOWMEN</Navbar.Brand>
+          <Navbar.Brand href="/">스노우맨</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="/">Game</Nav.Link>
-            <Nav.Link href="/store">Store</Nav.Link>
+            <Nav.Link href="/">게임</Nav.Link>
+            <Nav.Link href="/store">스토어</Nav.Link>
           </Nav>
           <Nav className="me-auto">
             <Navbar.Text>

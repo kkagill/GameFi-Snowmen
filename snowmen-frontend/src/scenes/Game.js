@@ -13,12 +13,10 @@ export default class MainGame extends Phaser.Scene {
         this.tracks;
 
         this.score = 0;
-        //this.highscore = 0;
 
         this.scoreTimer;
         this.scoreText;
         this.startText;
-        //this.highscoreText;
 
         this.atlasKey;
         this.receiveRewardText;
@@ -27,17 +25,18 @@ export default class MainGame extends Phaser.Scene {
             let state = store.getState();
             if (!state.isAuthenticated) {
                 console.log('game')
+                this.sound.stopAll(); // 음악 겹쳐서 
                 this.scene.start("MainMenu");
-            }           
+            }
         });
     }
 
     preload() {
         let state = store.getState();
         const userItemIds = state.userItems;
+        this.load.setPath('assets/');
 
         if (userItemIds.length > 0) {
-            this.load.setPath('assets/');
             if (userItemIds.length === 2) {
                 this.load.atlas('sprites_helmet_sword', 'sprites_helmet_sword.png', 'sprites.json');
                 this.atlasKey = 'sprites_helmet_sword';
@@ -50,8 +49,12 @@ export default class MainGame extends Phaser.Scene {
                     this.atlasKey = 'sprites_sword';
                 }
             }
-            this.removeAnimation();
+        } else {
+            this.load.atlas('sprites_basic', 'sprites_basic.png', 'sprites.json');
+            this.atlasKey = 'sprites_basic';
         }
+
+        this.removeAnimation();
     }
 
     removeAnimation() {
@@ -91,7 +94,6 @@ export default class MainGame extends Phaser.Scene {
     create() {
         this.createAnimation(this.atlasKey);
         this.score = 0;
-        //this.highscore = this.registry.get('highscore');
 
         this.add.image(512, 384, 'background');
 
@@ -104,14 +106,10 @@ export default class MainGame extends Phaser.Scene {
 
         this.player = new Player(this, this.tracks[0]);
 
-        this.add.image(0, 0, 'overlay').setOrigin(0);
-
         this.add.image(16, 0, 'sprites', 'panel-score').setOrigin(0);
-        //this.add.image(1024 - 16, 0, 'sprites', 'panel-best').setOrigin(1, 0);
 
         this.startText = this.add.text(400, 360, 'Space 눌러서 시작', { fontFamily: 'Arial', fontSize: 32, color: 'black' });
         this.scoreText = this.add.text(140, 2, this.score, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
-        // this.highscoreText = this.add.text(820, 2, this.highscore, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
 
         this.input.keyboard.once('keydown-SPACE', this.start, this);
     }
@@ -144,13 +142,11 @@ export default class MainGame extends Phaser.Scene {
 
         let state = store.getState();
         if (state.networkChanged) {
-            this.scene.stop();
+            this.scene.pause();
         }
     }
 
     gameOver() {
-        //this.infoPanel.setTexture('gameover');
-
         this.tweens.add({
             targets: this.infoPanel,
             y: 384,
@@ -163,14 +159,12 @@ export default class MainGame extends Phaser.Scene {
             track.stop();
         });
 
+        this.sound.stopAll();
+        this.sound.play('gameover');
+
         this.player.stop();
 
         this.scoreTimer.destroy();
-
-        // if (this.score > this.highscore) {
-        //     this.highscoreText.setText('NEW!');
-        //     this.registry.set('highscore', this.score);
-        // }
 
         this.scene.pause();
 

@@ -26,6 +26,7 @@ export default class Snowman extends Phaser.Physics.Arcade.Sprite
         }
 
         this.time = scene.time;
+        this.sound = scene.sound;
 
         this.isAlive = true;
         this.isThrowing = false;
@@ -180,6 +181,8 @@ export default class Snowman extends Phaser.Physics.Arcade.Sprite
 
         this.play('snowmanDie' + this.size);
 
+        this.sound.play('hit-snowman');
+        
         this.body.stop();
 
         this.body.enable = false;
